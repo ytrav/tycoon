@@ -1,25 +1,42 @@
 <template>
     <header>
-        <h2>Tycoon.io</h2> <span>{{ dollars }} dollars</span> <span>{{ gold }} gold</span> <h3 @click="save">Save</h3> <h3 @click="load" id="load">Load</h3>
+        <h2 @click="mainMenu">Tycoon.io</h2> <span>{{ dollars }} dollars</span> <span>{{ gold }} gold</span> <h3 @click="save">Save</h3> <h3 @click="load" id="load">Load</h3> <input type="file" id="file" v-if="loadVisible" @change="loadFile" />
     </header>
 </template>
 
 <script>
 export default {
     name: 'AppHeader',
+    data() {
+        return {
+            loadVisible: false,
+        }
+    },
     props: {
         dollars: Number,
         gold: Number
     },
     methods: {
+        mainMenu() {
+            this.$emit('main-menu');
+        },
         save() {
             //emit save event
             this.$emit('save');
         },
         load() {
+            // toggle loadVisible
+            this.loadVisible = !this.loadVisible;
+        },
+        loadFile() {
+            //get file
+            let file = document.getElementById('file').files[0];
             //emit load event
-            this.$emit('load');
-        }
+            this.$emit('load', file);
+            // clear file input
+            document.getElementById('file').value = '';
+            this.loadVisible = false;
+        },
     }
 }
 </script>
@@ -30,9 +47,9 @@ $secondary-color: #354F52;
 $tertiary-color: #52796F;
 $quaternary-color: #84A98C;
 $quinary-color: #CAD2C5;
-$success-color: #2ECC71;
-$warning-color: #FFDC00;
-$danger-color: #FF4136;
+$success-color: #155f35;
+$warning-color: #635500;
+$danger-color: #952620;
 
 header {
     font-family: 'Comfortaa', cursive;
@@ -51,6 +68,15 @@ header {
     width: 100%;
 }
 h3 {
+    cursor: pointer;
+    &:hover {
+        color: $quinary-color;
+    }
+    &:active {
+        color: $quaternary-color;
+    }
+}
+h2 {
     cursor: pointer;
     &:hover {
         color: $quinary-color;

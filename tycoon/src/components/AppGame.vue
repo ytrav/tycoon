@@ -65,9 +65,9 @@ $secondary-color: #354F52;
 $tertiary-color: #52796F;
 $quaternary-color: #84A98C;
 $quinary-color: #CAD2C5;
-$success-color: #2ECC71;
-$warning-color: #FFDC00;
-$danger-color: #FF4136;
+$success-color: #155f35;
+$warning-color: #635500;
+$danger-color: #952620;
 
 .slide-enter-active,
 .slide-leave-active {
