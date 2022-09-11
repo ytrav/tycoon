@@ -2,7 +2,7 @@
     <div id="game">
         <AppNav @changePage="changePage" />
         <Transition name="slide" mode="out-in">
-            <component :user="user" :upgradeLvl="upgradeLvl" @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="makeMoney" :is="window"></component>
+            <component :user="user" @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="makeMoney" :upgrades="upgrades" :is="window"></component>
         </Transition>
     </div>
 </template>
@@ -23,7 +23,7 @@ export default {
     props: {
         user: String,
         intervalTime: Number,
-        upgradeLvl: Object,
+        upgrades: Array,
     },
     methods: {
         buyUpgrade(upgrade) {

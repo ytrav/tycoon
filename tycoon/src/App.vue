@@ -9,7 +9,7 @@
   </Transition>
   <AppHeader v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog" @load="load($event)"
     :dollars="formattedDollars" :gold="gold" />
-  <component :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
+  <component :upgrades="upgrades" :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
     @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user"
     :upgradeLvl="upgradeLvl" />
 
@@ -48,6 +48,26 @@ export default {
       message: '',
       buttons: [],
       dataReact: {},
+      upgrades: [
+        {
+          name: 'Bigger earnings',
+          description: 'Make more money per click!',
+          cost: 30,
+          lvl: 1,
+        },
+        {
+          name: 'Faster earnings',
+          description: 'Make money faster!',
+          cost: 20,
+          lvl: 1,
+        },
+        {
+          name: 'Buy gold',
+          description: 'Exchange dollars for gold!',
+          cost: 30,
+          lvl: 1,
+        }
+      ]
     }
   },
   created() {
@@ -75,18 +95,21 @@ export default {
     startNew() {
       // set all values to default
       // make popup ask for name
+      // hide popup wait 2 seconds and show
+      this.showPopup = false;
+      //wait 2 seconds and show popup
+      setTimeout(() => {
+        this.showPopup = true;
+      }, 450);
       this.title = 'New Game';
       this.message = 'Please enter your name:';
       this.inputBox = true;
       this.inputText = 'John Doe';
       this.buttons = [
         {
-          text: 'Cancel',
-          action: 'close',
-        },
-        {
           text: 'Start',
           action: 'startNewGame',
+          styleClass: 'success',
         },
       ];
       // this.showPopup = false;
@@ -97,7 +120,8 @@ export default {
       // if user input is not empty, start new game
       if (this.inputValue !== '') {
         this.inputBox = false;
-        this.inputValue = 'Viktorino';
+        // this.inputValue = 'Viktorino';
+        alert('Welcome ' + this.inputValue + '!');
         this.user = this.inputValue;
         this.showPopup = false;
         this.dollars = 0;
@@ -168,53 +192,62 @@ export default {
     buyUpgrade(upgrade) {
       // alert('You bought upgrade ' + upgrade);
       // check which upgrade was bought
-      switch (upgrade) {
-        case '1':
+      // alert('You bought upgrade ' + upgrade.number);
+      switch (upgrade.number) {
+        case 0:
           // upgrade 1
-          if (this.dollars >= 30) {
-            this.dollars -= 30;
+          if (this.dollars >= upgrade.cost) {
+            this.upgrades[0].cost = upgrade.cost;
+            this.dollars -= this.upgrades[0].cost;
+            this.upgrades[0].cost = this.upgrades[0].cost * 2;
             this.multiplier *= 2;
             this.upgradeLvl.up1++;
             this.displayMoney();
           } else {
-            alert('You don\'t have enough money!');
+            this.notEnoughMoney(0);
           }
           break;
-        case '2':
+        case 1:
           // upgrade 2
-          if (this.dollars >= 20) {
-            this.dollars -= 20;
+          if (this.dollars >= upgrade.cost) {
+            this.upgrades[1].cost = upgrade.cost;
+            this.dollars -= this.upgrades[1].cost;
+            this.upgrades[1].cost = this.upgrades[1].cost * 2;
             this.intervalTime -= 100;
             this.upgradeLvl.up2++;
             this.displayMoney();
           } else {
-            this.showPopup = true;
-            this.title = 'Not enough money!';
-            this.message = 'You don\'t have enough money to buy this upgrade!';
-            this.buttons = [
-              {
-                text: 'OK',
-                action: 'close',
-                styleClass: 'success',
-              },
-            ];
+            this.notEnoughMoney(1);
           }
           break;
-        case '3':
+        case 2:
           // upgrade 3
-          if (this.dollars >= 30) {
-            this.dollars -= 30;
+          if (this.dollars >= upgrade.cost) {
+            this.upgrades[2].cost = upgrade.cost;
+            this.dollars -= this.upgrades[2].cost;
             this.gold += 1;
             this.upgradeLvl.up3++;
             this.displayMoney();
           } else {
-            alert('You don\'t have enough money!');
+            this.notEnoughMoney(2);
           }
           break;
         default:
           // do nothing
           break;
       }
+    },
+    notEnoughMoney(number) {
+      this.showPopup = true;
+      this.title = 'Not enough money';
+      this.message = `You need $${this.upgrades[number].cost} to buy this upgrade. You only have $${this.dollars}.`;
+      this.buttons = [
+        {
+          text: 'Ok',
+          action: 'close',
+          styleClass: 'success'
+        },
+      ];
     },
     saveDialog() {
       this.showPopup = true;

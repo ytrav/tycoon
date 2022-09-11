@@ -3,7 +3,7 @@
         <div id="popup-inner" @click.stop>
             <h2>{{ title }}</h2>
             <p>{{ message }}</p>
-            <input type="name" v-if="input" :placeholder="inputText" ref="input">
+            <input autofocus type="name" v-if="input" :placeholder="inputText" ref="input">
             <div id="buttons">
                 <button :class="button.styleClass" v-for="(button,idx) in buttons" :key="idx"
                     @click="execute(button.action)">{{ button.text }}</button>
@@ -63,7 +63,7 @@ input {
     padding: 0.5rem;
     border: 1px solid $primary-color;
     border-radius: 0.25rem;
-    margin-bottom: 1rem;
+    margin-top: 1rem;
 }
 
 #popup {

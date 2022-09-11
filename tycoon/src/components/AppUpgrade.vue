@@ -1,9 +1,9 @@
 <template>
     <div class="app-upgrade window">
         <div v-for="(upgrade,idx) in upgrades" :key="idx" class="upgrade">
-            <h3>{{idx}}. {{ upgrade.name }}</h3>
+            <h3>{{ upgrade.name }} - level {{ upgrade.lvl }}</h3>
             <p>{{ upgrade.description }}</p>
-            <p>Cost: {{ upgrade.cost }} dollars</p>
+            <p class="cost">{{ upgrade.cost }} dollars</p>
             <button @click="buyUpgrade(idx)">Buy</button>
         </div>
     </div>
@@ -13,34 +13,19 @@
 export default {
     name: 'AppUpgrade',
     props: {
-        upgrade: Object
+        upgrades: Array,
     },
     data() {
-        return {
-            upgrades: {
-                1: {
-                    name: 'Bigger earnings',
-                    description: 'Make more money per click!',
-                    cost: 30,
-                },
-                2: {
-                    name: 'Faster earnings',
-                    description: 'Make money faster!',
-                    cost: 20,
-                },
-                3: {
-                    name: 'Upgrade 3',
-                    description: 'This is the third upgrade',
-                    cost: 30,
-                }
-            }
-        }
+        return {}
     },
     methods: {
         buyUpgrade(number) {
-            this.$emit('buy-upgrade', number);
+            // this.upgrades[number].lvl++;
+            // this.upgrades[number].cost *= 2;
+            // emit upgrade number and cost
+            this.$emit('buy-upgrade', { number, cost: this.upgrades[number].cost });
         }
-    }
+    },
 }
 </script>
 
@@ -63,9 +48,33 @@ $danger-color: #952620;
     padding: 1rem;
     border-radius: 1rem;
     font-family: 'Rubik', sans-serif;
+    display: flex;
+    flex-flow: row wrap;
+    gap: 1rem;
+    justify-content: center;
 
     h2 {
         font-size: 1.5rem;
+        font-weight: 500;
+    }
+}
+
+.upgrade {
+    background-color: $tertiary-color;
+    padding: 1rem;
+    border-radius: 1rem;
+    // make height and width of each upgrade the same
+    width: 100%;
+    max-width: 300px;
+    flex: 1 1 1;
+    display: flex;
+    justify-content: space-between;
+    flex-flow: column;
+    align-items: space-between;
+    color: #fff;
+
+    .cost {
+        font-size: 1.2rem;
         font-weight: 500;
     }
 }
