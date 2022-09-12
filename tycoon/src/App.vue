@@ -10,8 +10,7 @@
   <AppHeader v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog" @load="load($event)"
     :dollars="formattedDollars" :gold="gold" />
   <component :upgrades="upgrades" :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
-    @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user"
-    :upgradeLvl="upgradeLvl" />
+    @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user" />
 
 </template>
 
@@ -38,11 +37,6 @@ export default {
       multiplier: 1,
       intervalTime: 500,
       formattedDollars: 0,
-      upgradeLvl: {
-        up1: 1,
-        up2: 1,
-        up3: 1,
-      },
       secCode: '',
       title: '',
       message: '',
@@ -75,13 +69,13 @@ export default {
     if (localStorage.getItem('gameStarted') === 'true') {
       this.gameStarted = true;
     }
-    if (localStorage.getItem('user') && localStorage.getItem('dollars') && localStorage.getItem('gold') && localStorage.getItem('multiplier') && localStorage.getItem('intervalTime') && localStorage.getItem('upgradeLvl')) {
+    if (localStorage.getItem('user') && localStorage.getItem('dollars') && localStorage.getItem('gold') && localStorage.getItem('multiplier') && localStorage.getItem('intervalTime') && localStorage.getItem('upgrades')) {
       this.user = localStorage.getItem('user');
       this.dollars = parseInt(localStorage.getItem('dollars'));
       this.gold = parseInt(localStorage.getItem('gold'));
       this.multiplier = parseInt(localStorage.getItem('multiplier'));
       this.intervalTime = parseInt(localStorage.getItem('intervalTime'));
-      this.upgradeLvl = JSON.parse(localStorage.getItem('upgradeLvl'));
+      this.upgrades = JSON.parse(localStorage.getItem('upgrades'));
     }
     this.displayMoney();
     setInterval(() => {
@@ -120,24 +114,37 @@ export default {
       // if user input is not empty, start new game
       if (this.inputValue !== '') {
         this.inputBox = false;
-        // this.inputValue = 'Viktorino';
-        alert('Welcome ' + this.inputValue + '!');
-        this.user = this.inputValue;
         this.showPopup = false;
         this.dollars = 0;
         this.formattedDollars = 0;
         this.gold = 0;
         this.multiplier = 1;
         this.intervalTime = 500;
-        this.upgradeLvl = {
-          up1: 1,
-          up2: 1,
-          up3: 1,
-        };
+        this.upgrades = [
+          {
+            name: 'Bigger earnings',
+            description: 'Make more money per click!',
+            cost: 30,
+            lvl: 1,
+          },
+          {
+            name: 'Faster earnings',
+            description: 'Make money faster!',
+            cost: 20,
+            lvl: 1,
+          },
+          {
+            name: 'Buy gold',
+            description: 'Exchange dollars for gold!',
+            cost: 30,
+            lvl: 1,
+          }
+        ];
         this.gameStarted = true;
         localStorage.setItem('gameStarted', true);
         this.gameActive = true;
         this.currentScreen = 'AppGame';
+        this.user = this.inputValue;
       }
     },
     goToMainMenu() {
@@ -187,7 +194,7 @@ export default {
       localStorage.setItem('gold', this.gold);
       localStorage.setItem('multiplier', this.multiplier);
       localStorage.setItem('intervalTime', this.intervalTime);
-      localStorage.setItem('upgradeLvl', JSON.stringify(this.upgradeLvl));
+      localStorage.setItem('upgrades', JSON.stringify(this.upgrades));
     },
     buyUpgrade(upgrade) {
       // alert('You bought upgrade ' + upgrade);
@@ -201,7 +208,7 @@ export default {
             this.dollars -= this.upgrades[0].cost;
             this.upgrades[0].cost = this.upgrades[0].cost * 2;
             this.multiplier *= 2;
-            this.upgradeLvl.up1++;
+            this.upgrades[0].lvl++;
             this.displayMoney();
           } else {
             this.notEnoughMoney(0);
@@ -214,7 +221,7 @@ export default {
             this.dollars -= this.upgrades[1].cost;
             this.upgrades[1].cost = this.upgrades[1].cost * 2;
             this.intervalTime -= 100;
-            this.upgradeLvl.up2++;
+            this.upgrades[1].lvl++;
             this.displayMoney();
           } else {
             this.notEnoughMoney(1);
@@ -226,7 +233,7 @@ export default {
             this.upgrades[2].cost = upgrade.cost;
             this.dollars -= this.upgrades[2].cost;
             this.gold += 1;
-            this.upgradeLvl.up3++;
+            this.upgrades[2].lvl++;
             this.displayMoney();
           } else {
             this.notEnoughMoney(2);
@@ -272,14 +279,14 @@ export default {
     },
     saveProgress() {
       this.showPopup = false;
-      this.secCode = this.dollars + this.gold + this.multiplier + 1000 + this.intervalTime + this.upgradeLvl.up1 + this.upgradeLvl.up2 + this.upgradeLvl.up3;
+      this.secCode = this.dollars + this.gold * 2 + this.multiplier + 2453 - this.intervalTime - this.upgrades[0].cost + 14 + this.upgrades[0].lvl + this.upgrades[1].cost + this.upgrades[1].lvl + this.upgrades[2].cost + this.upgrades[2].lvl;
       const data = {
         user: this.user,
         dollars: this.dollars,
         gold: this.gold,
         multiplier: this.multiplier,
         intervalTime: this.intervalTime,
-        upgradeLvl: this.upgradeLvl,
+        upgrades: this.upgrades,
         secCode: this.secCode,
       }
       const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
@@ -289,7 +296,7 @@ export default {
       const reader = new FileReader();
       reader.onload = (e) => {
         const data = JSON.parse(e.target.result);
-        if (data.secCode === data.dollars + data.gold + data.multiplier + 1000 + data.intervalTime + data.upgradeLvl.up1 + data.upgradeLvl.up2 + data.upgradeLvl.up3) {
+        if (data.secCode === data.dollars + data.gold * 2 + data.multiplier + 2453 - data.intervalTime - data.upgrades[0].cost + 14 + data.upgrades[0].lvl + data.upgrades[1].cost + data.upgrades[1].lvl + data.upgrades[2].cost + data.upgrades[2].lvl) {
           // ask if user wants to load
           this.dataReact = data;
           this.showPopup = true;
@@ -330,7 +337,7 @@ export default {
       this.gold = this.dataReact.gold;
       this.multiplier = this.dataReact.multiplier;
       this.intervalTime = this.dataReact.intervalTime;
-      this.upgradeLvl = this.dataReact.upgradeLvl;
+      this.upgrades = this.dataReact.upgrades;
       this.displayMoney();
     },
     displayMoney() {

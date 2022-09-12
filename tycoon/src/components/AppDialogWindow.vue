@@ -3,7 +3,7 @@
         <div id="popup-inner" @click.stop>
             <h2>{{ title }}</h2>
             <p>{{ message }}</p>
-            <input autofocus type="name" v-if="input" :placeholder="inputText" ref="input">
+            <input autofocus type="name" v-if="input" :placeholder="inputText" v-model="popupInputValue" ref="input">
             <div id="buttons">
                 <button :class="button.styleClass" v-for="(button,idx) in buttons" :key="idx"
                     @click="execute(button.action)">{{ button.text }}</button>
@@ -22,12 +22,20 @@ export default {
         input: Boolean,
         inputText: String,
     },
+    data() {
+        return {
+            popupInputValue: '',
+        }
+    },
     methods: {
         execute(action) {
-            this.$emit(action);
-            if (this.input) {
-                this.$emit('input', this.$refs.input.value);
+            if (action === 'startNewGame') {
+                this.usernameInput();
             }
+            this.$emit(action);
+        },
+        usernameInput() {
+            this.$emit('input', this.popupInputValue);
         },
         close() {
             this.$emit('close');

@@ -1,10 +1,11 @@
 <template>
     <div class="app-upgrade window">
-        <div v-for="(upgrade,idx) in upgrades" :key="idx" class="upgrade">
-            <h3>{{ upgrade.name }} - level {{ upgrade.lvl }}</h3>
+        <div v-for="(upgrade,idx) in upgrades" :key="idx" class="upgrade" @click="buyUpgrade(idx)" :title="`Click to buy ${upgrade.name} level ${upgrade.lvl} for ${upgrade.cost} dollars`">
+            <h3>{{ upgrade.name }}</h3>
+            <h4>Level {{ upgrade.lvl }}</h4>
             <p>{{ upgrade.description }}</p>
             <p class="cost">{{ upgrade.cost }} dollars</p>
-            <button @click="buyUpgrade(idx)">Buy</button>
+            
         </div>
     </div>
 </template>
@@ -72,18 +73,20 @@ $danger-color: #952620;
     flex-flow: column;
     align-items: space-between;
     color: #fff;
-
+    cursor: pointer;
     .cost {
         font-size: 1.2rem;
         font-weight: 500;
+    }
+    background-color: $tertiary-color;
+    &:hover {
+        background-color: $quaternary-color;
     }
 }
 
 button {
     position: relative;
     display: inline-block;
-    cursor: pointer;
-    background-color: $quaternary-color;
     border: none;
     border-radius: 0.5rem;
     padding: 0.5rem 1rem;
@@ -91,10 +94,10 @@ button {
     font-weight: 500;
     color: $primary-color;
     // transition: all 0.1s ease-in-out;
+    color: #fff;
+    font-weight: 600;
+    font-size: 1.2rem;
 
-    &:hover {
-        background-color: $tertiary-color;
-    }
 
     &:active {
         background-color: $secondary-color;
