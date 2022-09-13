@@ -4,13 +4,18 @@
   </Transition>
   <Transition name="popup">
     <AppDialogWindow v-if="showPopup" :title="title" :message="message" :buttons="buttons" :input="inputBox"
-      :inputText="inputText" @input="input($event)" @close="close" @save="saveProgress" @startNew="startNew"
-      @startNewGame="startNewGame" @loadFile="loadFile" />
+      :inputText="inputText" @input="input($event)" :inputBoxValue="inputBoxValue" @close="close" @save="saveProgress"
+      @saveFile="save" @startNew="startNew" @startNewGame="startNewGame" @loadFile="loadFile"
+      @saveNameInput="saveNameInput" />
   </Transition>
-  <AppHeader v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog" @load="load($event)"
-    :dollars="formattedDollars" :gold="gold" />
-  <component :upgrades="upgrades" :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
-    @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user" />
+  <Transition name="head-slide">
+    <AppHeader :gameActive="gameActive" v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog" @load="load($event)"
+      :dollars="formattedDollars" :gold="gold" />
+  </Transition>
+  <Transition name="switch" mode="out-in">
+    <component :upgrades="upgrades" :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
+      @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user" />
+  </Transition>
 
 </template>
 
@@ -42,6 +47,8 @@ export default {
       message: '',
       buttons: [],
       dataReact: {},
+      fileName: '',
+      inputBoxValue: '',
       upgrades: [
         {
           name: 'Bigger earnings',
@@ -279,6 +286,32 @@ export default {
     },
     saveProgress() {
       this.showPopup = false;
+      setTimeout(() => {
+        this.showPopup = true;
+      }, 450);
+      this.title = 'Save Progress';
+      this.message = 'Please name your save:';
+      this.inputBox = true;
+      this.inputText = 'file-name.json';
+      this.inputBoxValue = this.fileName;
+      this.buttons = [
+        {
+          text: 'Save',
+          action: 'saveFile',
+          styleClass: 'success',
+        },
+      ];
+
+    },
+    saveNameInput() {
+      this.fileName = this.inputBoxValue;
+      alert(this.fileName);
+    },
+    save() {
+      this.showPopup = false;
+      const date = new Date();
+      const dateTime = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + '-' + date.getHours() + '-' + date.getMinutes();
+      this.fileName = `save-${this.user}-${dateTime}.json`;
       this.secCode = this.dollars + this.gold * 2 + this.multiplier + 2453 - this.intervalTime - this.upgrades[0].cost + 14 + this.upgrades[0].lvl + this.upgrades[1].cost + this.upgrades[1].lvl + this.upgrades[2].cost + this.upgrades[2].lvl;
       const data = {
         user: this.user,
@@ -289,8 +322,9 @@ export default {
         upgrades: this.upgrades,
         secCode: this.secCode,
       }
+
       const blob = new Blob([JSON.stringify(data)], { type: 'application/json' });
-      saveAs(blob, 'save.json');
+      saveAs(blob, this.fileName);
     },
     load(file) {
       const reader = new FileReader();
@@ -412,6 +446,27 @@ $danger-color: #952620;
 .popup-leave-to {
   opacity: 0;
   transform: translateY(50px);
+}
+
+.switch-enter-active,
+.switch-leave-active {
+  transition: all .2s;
+}
+
+.switch-enter-from {
+  opacity: 0;
+  transform: translateX(-50px);
+}
+
+.head-slide-enter-active,
+.head-slide-leave-active {
+  transition: all .2s;
+}
+
+.head-slide-enter-from,
+.head-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-50px);
 }
 
 #popup #popup-inner #buttons button.normal {

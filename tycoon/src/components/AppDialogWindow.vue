@@ -21,21 +21,22 @@ export default {
         buttons: Array,
         input: Boolean,
         inputText: String,
+        inputTextValue: String,
     },
     data() {
         return {
-            popupInputValue: '',
+            popupInputValue: this.inputTextValue,
         }
     },
     methods: {
         execute(action) {
             if (action === 'startNewGame') {
-                this.usernameInput();
+                this.$emit('input', this.popupInputValue);
+            }
+            if (action === 'saveNameInput') {
+                this.$emit('saveNameInput', this.popupInputValue);
             }
             this.$emit(action);
-        },
-        usernameInput() {
-            this.$emit('input', this.popupInputValue);
         },
         close() {
             this.$emit('close');

@@ -1,6 +1,8 @@
 <template>
     <header>
-        <h2 @click="mainMenu">Tycoon.io</h2> <span>{{ dollars }} dollars</span> <span>{{ gold }} gold</span> <h3 @click="save">Save</h3> <h3 @click="load" id="load">Load</h3> <input type="file" id="file" v-if="loadVisible" @change="loadFile" />
+        <h2 @click="mainMenu">Tycoon.io</h2> <span>{{ dollars }} dollars</span> <span>{{ gold }} gold</span> <h3 @click="save">Save</h3> <h3 @click="load" id="load">Load</h3> <Transition name="input">
+            <input type="file" id="file" v-if="loadVisible" @change="loadFile" />
+        </Transition>
     </header>
 </template>
 
@@ -9,12 +11,13 @@ export default {
     name: 'AppHeader',
     data() {
         return {
-            loadVisible: false,
+            loadVisible: true,
         }
     },
     props: {
         dollars: Number,
-        gold: Number
+        gold: Number,
+        gameActive: Boolean,
     },
     methods: {
         mainMenu() {
@@ -51,6 +54,17 @@ $success-color: #155f35;
 $warning-color: #635500;
 $danger-color: #952620;
 
+.input-enter-active, .input-leave-active {
+    transition: all 0.3s;
+}
+
+.input-enter-from, .input-leave-to {
+    // move the element out of the screen
+    // leaving the space for it
+    opacity: 0;
+    transform: translateX(200px);
+}
+
 header {
     font-family: 'Comfortaa', cursive;
     background-color: $tertiary-color;
@@ -84,5 +98,9 @@ h2 {
     &:active {
         color: $quaternary-color;
     }
+}
+
+input {
+    padding: 0.5rem;
 }
 </style>
