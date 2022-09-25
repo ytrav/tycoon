@@ -1,6 +1,6 @@
 <template>
     <nav>
-        <span @click="changePage(idx)" v-for="(link,idx) in nav" :key="idx">{{ link.name }}</span>
+        <span @click="changePage(idx, link.name)" v-for="(link,idx) in nav" :key="idx" :class="{ selected: window === link.name}">{{ link.name }}</span>
     </nav>
 </template>
 
@@ -8,12 +8,14 @@
 export default {
     name: 'AppNav',
     methods: {
-        changePage(idx) {
+        changePage(idx, name) {
+            this.window = name;
             this.$emit('change-page', idx);
         }
     },
     data() {
         return {
+            window: 'Earn',
             nav: [
                 {
                     name: 'Earn',
@@ -59,7 +61,12 @@ span {
     padding: 1rem;
     &:hover {
         color: #fff;
-        background-color: $tertiary-color;
+        background-color: $secondary-color;
     }
+}
+
+.selected {
+    color: #fff;
+    background-color: $tertiary-color;
 }
 </style>

@@ -1,10 +1,11 @@
 <template>
     <div class="app-upgrade window">
-        <div v-for="(upgrade,idx) in upgrades" :key="idx" class="upgrade" @click="buyUpgrade(idx)" :title="`Click to buy ${upgrade.name} level ${upgrade.lvl} for ${upgrade.cost} dollars`">
+        <div v-for="(upgrade,idx) in upgrades" :key="idx" class="upgrade" @click="buyUpgrade(idx)" :title="`Click to buy ${upgrade.name} level ${upgrade.lvl} for &#8372;${upgrade.formattedCost} `">
             <h3>{{ upgrade.name }}</h3>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path :d="`${upgrade.svgPath}`" /></svg>
             <h4>Level {{ upgrade.lvl }}</h4>
             <p>{{ upgrade.description }}</p>
-            <p class="cost">{{ upgrade.cost }} dollars</p>
+            <p class="cost">&#8372;{{ upgrade.formattedCost }}</p>
             
         </div>
     </div>
@@ -73,6 +74,10 @@ $danger-color: #952620;
     flex-flow: column;
     align-items: space-between;
     color: #fff;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
     cursor: pointer;
     .cost {
         font-size: 1.2rem;
@@ -82,6 +87,14 @@ $danger-color: #952620;
     &:hover {
         background-color: $quaternary-color;
     }
+}
+
+svg {
+    width: 100%;
+    max-width: 100px;
+    height: 100%;
+    max-height: 100px;
+    fill: #fff;
 }
 
 button {

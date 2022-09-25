@@ -91,6 +91,10 @@ input {
         background-color: white;
         padding: 1rem;
         border-radius: 0.5rem;
+        // max width and height
+        max-width: 500px;
+        max-height: 500px;
+        
 
         h2 {
             margin: 0;

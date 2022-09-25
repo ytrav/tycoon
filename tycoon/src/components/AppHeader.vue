@@ -1,8 +1,20 @@
 <template>
     <header>
-        <h2 @click="mainMenu">Tycoon.io</h2> <span>{{ dollars }} dollars</span> <span>{{ gold }} gold</span> <h3 @click="save">Save</h3> <h3 @click="load" id="load">Load</h3> <Transition name="input">
-            <input type="file" id="file" v-if="loadVisible" @change="loadFile" />
-        </Transition>
+        <h2 @click="mainMenu">Tycoon.io</h2> <span :title="`Your balance is &#8372;${dollars}`" class="dollars">&#8372;{{ dollars }}</span>
+        <span class="gold"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path
+                    d="M1 22L2.5 17H9.5L11 22H1M13 22L14.5 17H21.5L23 22H13M6 15L7.5 10H14.5L16 15H6M23 6.05L19.14 7.14L18.05 11L16.96 7.14L13.1 6.05L16.96 4.96L18.05 1.1L19.14 4.96L23 6.05Z" />
+            </svg> {{ gold }}</span>
+        <h3 @click="save">Save</h3>
+        <label for="file">
+            <h3>Load</h3>
+        </label>
+        <input type="file" id="file" placeholder="Load save file" @change="loadFile" />
+        <!-- <Transition name="input">
+            <div class="loadwrap" v-if="loadVisible">
+                
+            </div>
+        </Transition> -->
     </header>
 </template>
 
@@ -54,11 +66,13 @@ $success-color: #155f35;
 $warning-color: #635500;
 $danger-color: #952620;
 
-.input-enter-active, .input-leave-active {
+.input-enter-active,
+.input-leave-active {
     transition: all 0.3s;
 }
 
-.input-enter-from, .input-leave-to {
+.input-enter-from,
+.input-leave-to {
     // move the element out of the screen
     // leaving the space for it
     opacity: 0;
@@ -80,21 +94,58 @@ header {
     left: 0;
     right: 0;
     width: 100%;
+    // transition: height 0.3s ease-in-out;
 }
+
+.dollars {
+    // max-width: 150px;
+    width: 250px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+svg {
+    fill: #fff;
+    width: 1.5rem;
+    height: 1.5rem;
+}
+
+span {
+    font-weight: 800;
+    font-size: 1.3em;
+}
+
+
+.gold {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    svg {
+        margin-bottom: 4px;
+    }
+}
+
 h3 {
     cursor: pointer;
+
     &:hover {
         color: $quinary-color;
     }
+
     &:active {
         color: $quaternary-color;
     }
 }
+
 h2 {
     cursor: pointer;
+
     &:hover {
         color: $quinary-color;
     }
+
     &:active {
         color: $quaternary-color;
     }
@@ -102,5 +153,6 @@ h2 {
 
 input {
     padding: 0.5rem;
+    display: none;
 }
 </style>

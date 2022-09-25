@@ -5,7 +5,11 @@
         </div>
         <div id="buttons">
             <button v-if="gameStarted" @click="execute('continue')">Continue</button>
-            <button v-for="(button,idx) in buttons" :key="idx" @click="execute(button.action)">{{ button.text }}</button>
+            <!-- <button v-for="(button,idx) in buttons" :key="idx" @click="execute(button.action)">{{ button.text }}</button> -->
+            <button @click="execute('newGame')">New Game</button>
+            <Label for="menuFile">Load Game</Label>
+            <input type="file" id="menuFile" placeholder="Load save file" @change="loadFile" />
+            <button @click="execute('settings')">Settings</button>
         </div>
     </div>
 </template>
@@ -20,6 +24,12 @@ export default {
     methods: {
         execute(action) {
             this.$emit('menuExecute', action);
+        },
+        loadFile() {
+            let file = document.getElementById('menuFile').files[0];
+            this.$emit('menuLoadFile', file);
+            document.getElementById('menuFile').value = '';
+            // this.$emit('menuLoadFile');
         }
     },
     data() {
@@ -74,7 +84,8 @@ h1 {
     gap: 1rem;
 }
 
-button {
+button,
+label {
     background-color: $quinary-color;
     border: none;
     border-radius: 0.5rem;
@@ -82,8 +93,13 @@ button {
     font-size: 1rem;
     font-family: 'Comfortaa', cursive;
     cursor: pointer;
+
     &:hover {
         background-color: darken($quinary-color, 10%);
     }
+}
+
+#menuFile {
+    display: none;
 }
 </style>

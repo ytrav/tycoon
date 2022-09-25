@@ -9,12 +9,13 @@
       @saveNameInput="saveNameInput" />
   </Transition>
   <Transition name="head-slide">
-    <AppHeader :gameActive="gameActive" v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog" @load="load($event)"
-      :dollars="formattedDollars" :gold="gold" />
+    <AppHeader :gameActive="gameActive" v-if="gameActive" @mainMenu="goToMainMenu" @save="saveDialog"
+      @load="load($event)" :dollars="formattedDollars" :gold="gold" />
   </Transition>
-  <Transition name="switch" mode="out-in">
+  <Transition name="switch" mode="out-in" appear>
     <component :upgrades="upgrades" :gameStarted="gameStarted" @menuExecute="menuExecute($event)" :is="currentScreen"
-      @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime" @makeMoney="madeMoney" :user="user" />
+      @menuLoadFile="menuLoadFile($event)" @buyUpgrade="buyUpgrade($event)" :intervalTime="intervalTime"
+      @makeMoney="madeMoney" :user="user" />
   </Transition>
 
 </template>
@@ -53,19 +54,25 @@ export default {
         {
           name: 'Bigger earnings',
           description: 'Make more money per click!',
+          svgPath: 'M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z',
           cost: 30,
+          formattedCost: 30,
           lvl: 1,
         },
         {
           name: 'Faster earnings',
           description: 'Make money faster!',
+          svgPath: 'M12,16A3,3 0 0,1 9,13C9,11.88 9.61,10.9 10.5,10.39L20.21,4.77L14.68,14.35C14.18,15.33 13.17,16 12,16M12,3C13.81,3 15.5,3.5 16.97,4.32L14.87,5.53C14,5.19 13,5 12,5A8,8 0 0,0 4,13C4,15.21 4.89,17.21 6.34,18.65H6.35C6.74,19.04 6.74,19.67 6.35,20.06C5.96,20.45 5.32,20.45 4.93,20.07V20.07C3.12,18.26 2,15.76 2,13A10,10 0 0,1 12,3M22,13C22,15.76 20.88,18.26 19.07,20.07V20.07C18.68,20.45 18.05,20.45 17.66,20.06C17.27,19.67 17.27,19.04 17.66,18.65V18.65C19.11,17.2 20,15.21 20,13C20,12 19.81,11 19.46,10.1L20.67,8C21.5,9.5 22,11.18 22,13Z',
           cost: 20,
+          formattedCost: 20,
           lvl: 1,
         },
         {
           name: 'Buy gold',
           description: 'Exchange dollars for gold!',
+          svgPath: 'M1 22L2.5 17H9.5L11 22H1M13 22L14.5 17H21.5L23 22H13M6 15L7.5 10H14.5L16 15H6M23 6.05L19.14 7.14L18.05 11L16.96 7.14L13.1 6.05L16.96 4.96L18.05 1.1L19.14 4.96L23 6.05Z',
           cost: 30,
+          formattedCost: 30,
           lvl: 1,
         }
       ]
@@ -84,12 +91,24 @@ export default {
       this.intervalTime = parseInt(localStorage.getItem('intervalTime'));
       this.upgrades = JSON.parse(localStorage.getItem('upgrades'));
     }
-    this.displayMoney();
+    // this.formattedDollars = this.formatNumber(this.dollars, this,formattedDollars);
     setInterval(() => {
       this.localStrg();
     }, 1000);
   },
+
+  // connect dollars and formattedDollars with a watcher and a function this.formatNumber(this.dollars, this.formattedDollars)
+  watch: {
+    dollars: function (val) {
+      this.formattedDollars = this.formatNumber(val, this.formattedDollars);
+    }
+  },
   methods: {
+    madeMoney() {
+      this.dollars += 1 * this.multiplier;
+      // this.formattedDollars = this.formatNumber(this.dollars, this.formattedDollars);
+      this.localStrg();
+    },
     input(text) {
       this.inputValue = text;
     },
@@ -131,19 +150,25 @@ export default {
           {
             name: 'Bigger earnings',
             description: 'Make more money per click!',
+            svgPath: 'M5,6H23V18H5V6M14,9A3,3 0 0,1 17,12A3,3 0 0,1 14,15A3,3 0 0,1 11,12A3,3 0 0,1 14,9M9,8A2,2 0 0,1 7,10V14A2,2 0 0,1 9,16H19A2,2 0 0,1 21,14V10A2,2 0 0,1 19,8H9M1,10H3V20H19V22H1V10Z',
             cost: 30,
+            formattedCost: 30,
             lvl: 1,
           },
           {
             name: 'Faster earnings',
             description: 'Make money faster!',
+            svgPath: 'M12,16A3,3 0 0,1 9,13C9,11.88 9.61,10.9 10.5,10.39L20.21,4.77L14.68,14.35C14.18,15.33 13.17,16 12,16M12,3C13.81,3 15.5,3.5 16.97,4.32L14.87,5.53C14,5.19 13,5 12,5A8,8 0 0,0 4,13C4,15.21 4.89,17.21 6.34,18.65H6.35C6.74,19.04 6.74,19.67 6.35,20.06C5.96,20.45 5.32,20.45 4.93,20.07V20.07C3.12,18.26 2,15.76 2,13A10,10 0 0,1 12,3M22,13C22,15.76 20.88,18.26 19.07,20.07V20.07C18.68,20.45 18.05,20.45 17.66,20.06C17.27,19.67 17.27,19.04 17.66,18.65V18.65C19.11,17.2 20,15.21 20,13C20,12 19.81,11 19.46,10.1L20.67,8C21.5,9.5 22,11.18 22,13Z',
             cost: 20,
+            formattedCost: 20,
             lvl: 1,
           },
           {
             name: 'Buy gold',
             description: 'Exchange dollars for gold!',
+            svgPath: 'M1 22L2.5 17H9.5L11 22H1M13 22L14.5 17H21.5L23 22H13M6 15L7.5 10H14.5L16 15H6M23 6.05L19.14 7.14L18.05 11L16.96 7.14L13.1 6.05L16.96 4.96L18.05 1.1L19.14 4.96L23 6.05Z',
             cost: 30,
+            formattedCost: 30,
             lvl: 1,
           }
         ];
@@ -203,6 +228,25 @@ export default {
       localStorage.setItem('intervalTime', this.intervalTime);
       localStorage.setItem('upgrades', JSON.stringify(this.upgrades));
     },
+    formatNumber(input, output) {
+      if (input >= 1000000000000000000) {
+        output = (input / 1000000000000000000).toFixed(2) + ' Qi';
+      }
+      if (input >= 1000000000000000) {
+        output = (input / 1000000000000000).toFixed(2) + 'Qa';
+      } else if (input >= 1000000000000) {
+        output = (input / 1000000000000).toFixed(2) + 'T';
+      } else if (input >= 1000000000) {
+        output = (input / 1000000000).toFixed(2) + 'B';
+      } else if (input >= 1000000) {
+        output = (input / 1000000).toFixed(2) + 'M';
+      } else if (input >= 1000) {
+        output = (input / 1000).toFixed(2) + 'K';
+      } else {
+        output = input;
+      }
+      return output;
+    },
     buyUpgrade(upgrade) {
       // alert('You bought upgrade ' + upgrade);
       // check which upgrade was bought
@@ -214,9 +258,11 @@ export default {
             this.upgrades[0].cost = upgrade.cost;
             this.dollars -= this.upgrades[0].cost;
             this.upgrades[0].cost = this.upgrades[0].cost * 2;
+            // set formatted cost to cost with letters M, B, T etc
+            this.upgrades[0].formattedCost = this.formatNumber(this.upgrades[0].cost, this.upgrades[0].formattedCost);
             this.multiplier *= 2;
             this.upgrades[0].lvl++;
-            this.displayMoney();
+            this.formattedDollars = this.formatNumber(this.dollars, this.formattedDollars);
           } else {
             this.notEnoughMoney(0);
           }
@@ -227,9 +273,12 @@ export default {
             this.upgrades[1].cost = upgrade.cost;
             this.dollars -= this.upgrades[1].cost;
             this.upgrades[1].cost = this.upgrades[1].cost * 2;
+            // set formatted cost to cost with letters M, B, T etc
+
+            this.upgrades[1].formattedCost = this.formatNumber(this.upgrades[1].cost, this.upgrades[1].formattedCost);
             this.intervalTime -= 100;
             this.upgrades[1].lvl++;
-            this.displayMoney();
+            this.formattedDollars = this.formatNumber(this.dollars, this.formattedDollars);
           } else {
             this.notEnoughMoney(1);
           }
@@ -241,7 +290,7 @@ export default {
             this.dollars -= this.upgrades[2].cost;
             this.gold += 1;
             this.upgrades[2].lvl++;
-            this.displayMoney();
+            this.formattedDollars = this.formatNumber(this.dollars, this.formattedDollars);
           } else {
             this.notEnoughMoney(2);
           }
@@ -254,7 +303,7 @@ export default {
     notEnoughMoney(number) {
       this.showPopup = true;
       this.title = 'Not enough money';
-      this.message = `You need $${this.upgrades[number].cost} to buy this upgrade. You only have $${this.dollars}.`;
+      this.message = `You need &#8372;${this.upgrades[number].formattedCost} to buy this upgrade. You only have &#8372;${this.formattedDollars}.`;
       this.buttons = [
         {
           text: 'Ok',
@@ -308,6 +357,8 @@ export default {
       alert(this.fileName);
     },
     save() {
+      // hide input
+      this.inputBox = false;
       this.showPopup = false;
       const date = new Date();
       const dateTime = date.getDate() + '-' + (date.getMonth() + 1) + '-' + date.getFullYear() + '-' + date.getHours() + '-' + date.getMinutes();
@@ -365,6 +416,12 @@ export default {
       reader.readAsText(file);
     },
     loadFile() {
+      // if current screen is not the game screen, go to game screen
+      if (this.currentScreen !== 'AppGame') {
+        this.currentScreen = 'AppGame';
+        this.gameStarted = true;
+        this.gameActive = true;
+      }
       this.showPopup = false;
       this.user = this.dataReact.user;
       this.dollars = this.dataReact.dollars;
@@ -372,29 +429,25 @@ export default {
       this.multiplier = this.dataReact.multiplier;
       this.intervalTime = this.dataReact.intervalTime;
       this.upgrades = this.dataReact.upgrades;
-      this.displayMoney();
+      this.formattedDollars = this.formatNumber(this.dollars, this.formattedDollars);
     },
-    displayMoney() {
-      if (this.dollars >= 1000000000000000) {
-        this.formattedDollars = (this.dollars / 1000000000000000).toFixed(1) + 'Q';
-      } else if (this.dollars >= 1000000000000) {
-        this.formattedDollars = (this.dollars / 1000000000000).toFixed(1) + 'T';
-      } else if (this.dollars >= 1000000000) {
-        this.formattedDollars = (this.dollars / 1000000000).toFixed(1) + 'B';
-      } else if (this.dollars >= 1000000) {
-        this.formattedDollars = (this.dollars / 1000000).toFixed(1) + 'M';
-      } else if (this.dollars >= 1000) {
-        this.formattedDollars = (this.dollars / 1000).toFixed(1) + 'K';
-      } else {
-        this.formattedDollars = this.dollars;
-      }
-      this.localStrg();
+    menuLoadFile(file) {
+      this.load(file);
     },
-    madeMoney() {
-      this.dollars += 1 * this.multiplier;
-      this.displayMoney();
-    },
-
+    // displayMoney() {
+    // if (this.dollars >= 1000000000000000) {
+    //   this.formattedDollars = (this.dollars / 1000000000000000).toFixed(2) + 'Q';
+    // } else if (this.dollars >= 1000000000000) {
+    //   this.formattedDollars = (this.dollars / 1000000000000).toFixed(2) + 'T';
+    // } else if (this.dollars >= 1000000000) {
+    //   this.formattedDollars = (this.dollars / 1000000000).toFixed(2) + 'B';
+    // } else if (this.dollars >= 1000000) {
+    //   this.formattedDollars = (this.dollars / 1000000).toFixed(2) + 'M';
+    // } else if (this.dollars >= 1000) {
+    //   this.formattedDollars = (this.dollars / 1000).toFixed(2) + 'K';
+    // } else {
+    //   this.formattedDollars = this.dollars;
+    // }
   },
   components: {
     AppHeader,
