@@ -6,7 +6,8 @@
             <input autofocus type="name" v-if="input" :placeholder="inputText" v-model="popupInputValue" ref="input">
             <div id="buttons">
                 <button :class="button.styleClass" v-for="(button,idx) in buttons" :key="idx"
-                    @click="execute(button.action)">{{ button.text }}</button>
+                    @click="execute(button.action)">{{ button.text }}
+                </button>
             </div>
         </div>
     </div>

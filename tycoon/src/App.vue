@@ -303,7 +303,7 @@ export default {
     notEnoughMoney(number) {
       this.showPopup = true;
       this.title = 'Not enough money';
-      this.message = `You need &#8372;${this.upgrades[number].formattedCost} to buy this upgrade. You only have &#8372;${this.formattedDollars}.`;
+      this.message = `You need ₴${this.upgrades[number].formattedCost} to buy this upgrade. You only have ₴${this.formattedDollars}.`;
       this.buttons = [
         {
           text: 'Ok',
